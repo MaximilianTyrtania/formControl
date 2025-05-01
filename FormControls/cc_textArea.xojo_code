@@ -1,9 +1,9 @@
 #tag WebContainerControl
-Begin cc_ControlWithLabel cc_textArea
+Begin cc_FormControl cc_textArea
    Compatibility   =   ""
    ControlID       =   ""
    Enabled         =   True
-   Height          =   154
+   Height          =   250
    Indicator       =   0
    LayoutDirection =   0
    LayoutType      =   0
@@ -124,14 +124,6 @@ End
 #tag EndWindowCode
 
 #tag ViewBehavior
-	#tag ViewProperty
-		Name="fieldName"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="string"
-		EditorType="MultiLineEditor"
-	#tag EndViewProperty
 	#tag ViewProperty
 		Name="_mPanelIndex"
 		Visible=false
@@ -335,6 +327,14 @@ End
 			"2 - TopToBottom"
 			"3 - BottomToTop"
 		#tag EndEnumValues
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="fieldName"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="string"
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Width"

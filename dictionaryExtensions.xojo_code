@@ -1,11 +1,11 @@
 #tag Module
-Protected Module rowSetExtensions
+Protected Module dictionaryExtensions
 	#tag Method, Flags = &h0
-		Function toControlDescriptorSelection(extends RS as rowset) As controlDescriptorSelection
-		  Var result As new ControlDescriptorSelection
+		Function toControlDescriptorSelection(extends d as Dictionary) As controlDescriptorSelection
+		  Var result As new controlDescriptorSelection
 		  Var curFieldName As String
-		  For colCt As Integer=0 To rs.ColumnCount-1
-		    result.value(rs.ColumnAt(colCt).Name)=New controlDescriptor(rs.ColumnAt(colCt).Name,rs.ColumnAt(colCt).Value)
+		  For Each key As Variant In d.Keys
+		    result.value(key.StringValue)=New controlDescriptor(key.StringValue,d.Value(key))
 		  Next
 		  
 		  Return result

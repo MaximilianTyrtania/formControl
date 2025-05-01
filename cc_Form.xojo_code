@@ -1,6 +1,7 @@
 #tag WebContainerControl
 Begin WebContainer cc_Form
    Compatibility   =   ""
+   ControlCount    =   0
    ControlID       =   ""
    Enabled         =   True
    Height          =   250
@@ -21,75 +22,15 @@ Begin WebContainer cc_Form
    Width           =   250
    _mDesignHeight  =   0
    _mDesignWidth   =   0
-   _mName          =   ""
    _mPanelIndex    =   -1
 End
 #tag EndWebContainerControl
 
 #tag WindowCode
-	#tag Method, Flags = &h21
-		Private Function getCurControl(curValueName as string, curValueType as integer, curValue as Variant) As cc_ControlWithLabel
-		  Var curControl As cc_ControlWithLabel
-		  Var controlLabel As String
-		  Var controlType As cc_Form.controlTypes
-		  Var curValuesToChooseFrom() As String
-		  Var curValuesToChooseFromAreSupplied As Boolean=Me.valuesToChooseFrom IsA Dictionary And valuesToChooseFrom.HasKey(curValueName) And valuesToChooseFrom.value(curValueName).IsArray
-		  Var inferControlTypeFromData As Boolean
-		  
-		  If Me.fieldNameMap IsA Dictionary And Me.fieldNameMap.HasKey(curValueName) Then
-		    controlLabel=Me.fieldNameMap.Value(curValueName).StringValue
-		  Else
-		    controlLabel=curValueName
-		  End If
-		  
-		  If Me.controlTypeMap IsA Dictionary And Me.controlTypeMap.HasKey(curValueName) Then
-		    controlType=cc_Form.controlTypes(Me.controlTypeMap.Value(curValueName).IntegerValue)
-		  Else
-		    controlType=Me.inferControlTypeFromValueType(curValueType,curValuesToChooseFromAreSupplied)
-		  End If
-		  
-		  If curValuesToChooseFromAreSupplied Then
-		    curValuesToChooseFrom=valuesToChooseFrom.value(curValueName)
-		  end if
-		  
-		  Select Case controlType
-		  Case cc_Form.controlTypes.TextArea
-		    curControl= New cc_textArea(curValueName,controlLabel,curValue.StringValue)
-		  Case cc_Form.controlTypes.TextField 
-		    curControl= New cc_textfield(curValueName,controlLabel,curValue.StringValue)
-		  Case cc_Form.controlTypes.NumberField 
-		    curControl= New cc_numberfield(curValueName,controlLabel,curValue.IntegerValue)
-		  Case cc_Form.controlTypes.PhoneField 
-		    curControl= New cc_Phonefield(curValueName,controlLabel,curValue.StringValue)
-		  Case cc_Form.controlTypes.emailField 
-		    curControl= New cc_emailfield(curValueName,controlLabel,curValue.StringValue)
-		  Case cc_Form.controlTypes.CheckBox 
-		    curControl=New cc_CheckBox(curValueName,controlLabel,curValue.BooleanValue)
-		  Case cc_Form.controlTypes.DatePicker  
-		    curControl=New cc_DatePicker(curValueName,controlLabel,curValue.DateTimeValue)
-		  Case cc_Form.controlTypes.PopupMenu 
-		    curControl=New cc_PopupMenu(curValueName,controlLabel,curValuesToChooseFrom,curvalue)
-		  Case cc_Form.controlTypes.RadioButtonGroup 
-		    curControl=New cc_RadioButtonGroup(curValueName,controlLabel,curValuesToChooseFrom,curvalue.StringValue)
-		  Case cc_Form.controlTypes.Listbox 
-		    curControl=New cc_Listbox(curValueName,controlLabel,curValuesToChooseFrom,curvalue.StringValue)
-		  Case cc_Form.controlTypes.NoControl
-		    Return Nil//for now, please provide entry in controlTypeMap
-		  Else
-		    Break
-		  End select
-		  
-		  curControl.LockLeft=True
-		  curControl.LockTop=True
-		  
-		  Return curControl
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Function getValues(modifiedOnly as Boolean = false) As Dictionary
 		  Var values As New Dictionary
-		  For Each curControl As cc_ControlWithLabel In Me.myControls
+		  For Each curControl As cc_FormControl In Me.myControls
 		    If modifiedOnly=False Or curControl.IsModified Then
 		      values.value(curControl.fieldName)=curControl.getValue
 		    end if
@@ -99,71 +40,21 @@ End
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Function inferControlTypeFromValueType(curValueType as integer, curValuesToChooseFromAreSupplied as Boolean) As cc_Form.controlTypes
-		  Var controlType As cc_Form.controlTypes
-		  
-		  If (curValueType=Variant.TypeString And curValuesToChooseFromAreSupplied=False) Then
-		    controlType=cc_Form.controlTypes.TextField
-		  ElseIf curValueType=Variant.TypeInteger Or curValueType=Variant.TypeInt64 Then
-		    controlType=cc_Form.controlTypes.NumberField
-		  ElseIf curValueType=Variant.TypeBoolean Then
-		    controlType=cc_Form.controlTypes.CheckBox
-		  ElseIf curValueType=Variant.TypeDateTime Then
-		    controlType=cc_Form.controlTypes.DatePicker
-		  ElseIf curValuesToChooseFromAreSupplied Then
-		    controlType=cc_Form.controlTypes.PopupMenu
-		  End If
-		  
-		  Return controlType
-		  
-		  
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
-		Sub init(values as Dictionary, fieldnameMap as dictionary = nil, controlTypeMap as dictionary = Nil, valuesToChooseFrom as dictionary = Nil)
-		  // Calling the overridden superclass constructor.
-		  // Note that this may need modifications if there are multiple constructor choices.
-		  // Possible constructor calls:
-		  // Constructor() -- From WebView
-		  // Constructor() -- From WebUIControl
-		  // Constructor() -- From WebControl
+		Sub init(controls() as cc_FormControl)
 		  Var start As DateTime=DateTime.Now
-		  Var curValue As Variant
-		  Var curValueType As Integer
-		  Var curValueName As String
-		  Var curTop As Integer
-		  Var curControl As cc_ControlWithLabel
-		  Var preferredControlType As cc_Form.controlTypes
-		  If controlTypeMap IsA Dictionary Then
-		    Me.controlTypeMap=controlTypeMap
-		  End If
-		  If fieldnameMap IsA Dictionary Then
-		    Me.fieldNameMap=fieldnameMap
-		  End If
-		  If valuesToChooseFrom IsA Dictionary Then
-		    Me.valuesToChooseFrom=valuesToChooseFrom
-		  End If
-		  Const kMargin=14
-		  For colct As Integer=0 To values.KeyCount-1
-		    curValueName=values.key(colct).StringValue
-		    curValue=values.value(curValueName)
-		    curValueType=curValue.Type
-		    curControl=Me.getCurControl(curValueName,curValueType,curValue)
-		    If curControl Is Nil Then Continue
-		    Me.myControls.Add(curControl)
-		  Next
+		  Me.myControls=Controls
 		  Me.setLabelandControlWidths()
 		  Var endtime As DateTime=DateTime.Now
-		  Var ittook As New DateDifferenceMBS(start,endtime)
-		  Var bp As Boolean //took 0.4 seconds for 85 controls
+		  //Var ittook As New DateDifferenceMBS(start,endtime)
+		  Var bp As Boolean //took 0.4 seconds for 85 controls on my 2,5 Ghz 2015 Macbook Pro
 		  
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub positionControls()
+		  var curAvailableWidth as integer=me.Width
 		  Var numberOfAvailableColumns As Integer=Floor(Me.Width/(myControls(0).Width+kMarginBetweenColumns))
 		  Var numberOfControlsToPutIntoOneColumn As Integer=Ceiling(myControls.Count/numberOfAvailableColumns)
 		  Var curColumnIndex As Integer
@@ -171,35 +62,48 @@ End
 		  Var curControlInColumnIndex As Integer
 		  Var curTop As Integer
 		  Var curLeft As Integer
+		  Var curLongestLabelWidthInPixel As Integer
+		  Var curLongestFieldWidthInPixel As Integer
 		  
 		  
-		  For Each curControl As cc_ControlWithLabel In Me.myControls
+		  For Each curControl As cc_FormControl In Me.myControls
 		    If curControl.Parent Is Nil Then
 		      curControl.EmbedWithin(Me,curLeft,curTop,curControl.Width,curControl.Height)
 		    Else
 		      curControl.Left=curLeft
 		      curControl.top=curTop
+		      curControl.setLabelWidth(curLongestLabelWidthInPixel)
+		      curControl.setFieldWidth(curLongestFieldWidthInPixel)
 		    End If
 		    If curControlInColumnIndex=numberOfControlsToPutIntoOneColumn Then
 		      curColumnIndex=curColumnIndex+1
 		      curControlInColumnIndex=0
 		      curTop=0
 		      curLeft=curColumnIndex*(curControl.Width+kMarginBetweenColumns)
+		      curLongestLabelWidthInPixel=0
+		      curLongestFieldWidthInPixel=0
 		    Else
 		      curTop=curTop+curControl.Height+kVerticalMarginBetweenControls
+		      If curControl.getLabelControl.Width>curLongestLabelWidthInPixel Then
+		        curLongestLabelWidthInPixel=curControl.getLabelControl.Width
+		      End If
+		      If curControl.getFieldControl.Width>curLongestFieldWidthInPixel Then
+		        curLongestFieldWidthInPixel=curControl.getFieldControl.Width
+		      End If
 		    End If
 		    curControlIndex=curControlIndex+1
 		    curControlInColumnIndex=curControlInColumnIndex+1
 		  Next
+		  
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub setLabelandControlWidths()
+		Sub setLabelAndControlWidths()
 		  Var curLongestLabelWidthInPixel As Integer
 		  Var curLongestFieldWidthInPixel As Integer
 		  
-		  For Each curControl As cc_ControlWithLabel In Me.myControls
+		  For Each curControl As cc_FormControl In Me.myControls
 		    If curControl.getLabelControl.Width>curLongestLabelWidthInPixel Then
 		      curLongestLabelWidthInPixel=curControl.getLabelControl.Width
 		    End If
@@ -208,7 +112,7 @@ End
 		    End If
 		  Next
 		  
-		  For Each curControl As cc_ControlWithLabel In Me.myControls
+		  For Each curControl As cc_FormControl In Me.myControls
 		    curControl.setLabelWidth(curLongestLabelWidthInPixel)
 		    curControl.setFieldWidth(curLongestFieldWidthInPixel)
 		    If curControl.getWidth>Me.Width Then
@@ -220,7 +124,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function validate() As Boolean
-		  For Each curControl As cc_ControlWithLabel In Me.myControls
+		  For Each curControl As cc_FormControl In Me.myControls
 		    If curControl.validate=False Then
 		      Return False
 		    End If
@@ -236,7 +140,7 @@ End
 			
 			Me.controlTypeMap.Value("cities")="radiobuttongroup"
 			
-			Or 
+			Or
 			
 			Me.controlTypeMap.Value("cities")="combobox"
 		#tag EndNote
@@ -253,7 +157,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
-		myControls() As cc_ControlWithLabel
+		myControls() As cc_FormControl
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -262,7 +166,6 @@ End
 			the valuesToChooseFrom here like this
 			
 			valuesToChooseFrom.value("color")=Array("red","blue","green")
-			
 		#tag EndNote
 		Private valuesToChooseFrom As Dictionary
 	#tag EndProperty
@@ -275,24 +178,17 @@ End
 	#tag EndConstant
 
 
-	#tag Enum, Name = controlTypes, Type = Integer, Flags = &h0
-		NoControl
-		  TextField
-		  TextArea
-		  CheckBox
-		  PopupMenu
-		  DatePicker
-		  RadioButtonGroup
-		  NumberField
-		  EMailField
-		  PhoneField
-		Listbox
-	#tag EndEnum
-
-
 #tag EndWindowCode
 
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="ControlCount"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="_mPanelIndex"
 		Visible=false

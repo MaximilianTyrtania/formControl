@@ -1,9 +1,10 @@
 #tag WebContainerControl
-Begin cc_ControlWithLabel cc_CheckBox
+Begin cc_FormControl cc_CheckBox
    Compatibility   =   ""
+   ControlCount    =   0
    ControlID       =   ""
    Enabled         =   True
-   Height          =   40
+   Height          =   42
    Indicator       =   0
    LayoutDirection =   0
    LayoutType      =   0
@@ -21,7 +22,6 @@ Begin cc_ControlWithLabel cc_CheckBox
    Width           =   250
    _mDesignHeight  =   0
    _mDesignWidth   =   0
-   _mName          =   ""
    _mPanelIndex    =   -1
    Begin WebLabel lbl
       Bold            =   False
@@ -73,7 +73,7 @@ Begin cc_ControlWithLabel cc_CheckBox
       Scope           =   0
       TabIndex        =   1
       Tooltip         =   ""
-      Top             =   0
+      Top             =   2
       Value           =   False
       Visible         =   True
       Width           =   30
@@ -127,12 +127,12 @@ End
 
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="fieldName"
+		Name="ControlCount"
 		Visible=false
 		Group="Behavior"
 		InitialValue=""
-		Type="string"
-		EditorType="MultiLineEditor"
+		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="_mPanelIndex"
@@ -337,6 +337,14 @@ End
 			"2 - TopToBottom"
 			"3 - BottomToTop"
 		#tag EndEnumValues
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="fieldName"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="string"
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Width"

@@ -28,7 +28,6 @@ Begin WebPage WebPage1
    _ImplicitInstance=   False
    _mDesignHeight  =   0
    _mDesignWidth   =   0
-   _mName          =   ""
    _mPanelIndex    =   -1
    Begin cc_Form cc_dynamic1
       ControlID       =   ""
@@ -90,39 +89,42 @@ End
 	#tag Event
 		Sub Opening()
 		  Var values As New Dictionary
-		  Var fieldNameControlTypeMap As New dictionary
-		  Var fieldNameMap As New dictionary
-		  Var valuesToChooseFrom As New Dictionary
 		  
+		  values.Value("year born")=1965
+		  values.Value("phone")="0123456789"
+		  values.Value("email")="dude@somewhere.com"
+		  values.Value("notes")="heavily into independant music, 90's stuff mostly, Modest Mouse, Jane's Addiction, The Smiths, Pavement, Radiohead, Smashing Pumpkins"
+		  Var cities() As String=Array("Shanghai","Berlin", "Hamburg", "London", "Tokio")
+		  values.value("cities")="Berlin"
+		  values.value("friendliness")="medium"
+		  Var friendlinessLevels() As String=Array("low","medium", "always friendly")
+		  //Var friendlinessLevels() As String=Array("low","medium", "often friendly", "always friendly")
 		  
-		  'values.Value("firstname")="Max"
-		  'values.Value("lastname")="Tyrtania"
-		  'values.Value("year born")=1965
-		  'values.Value("phone")="0123456789"
-		  'values.Value("email")="dude@somewhere.com"
-		  'values.Value("notes")="heavily into independant music, 90's stuff mostly, Modest Mouse, Jane's Addiction, The Smiths, Pavement, Radiohead, Smashing Pumpkins"
-		  'fieldNameControlTypeMap.value("notes")=cc_Form.controlTypes.TextArea
-		  'Var cities() As String=Array("Shanghai","Berlin", "Hamburg", "London", "Tokio")
-		  'values.value("cities")="Berlin"
-		  'valuesToChooseFrom.Value("cities")=cities
-		  'values.value("friendliness")="medium"
-		  'Var friendlinessLevels() As String=Array("low","medium", "often friendly", "always friendly")
-		  'fieldNameControlTypeMap.value("friendliness")=cc_Form.controlTypes.RadioButtonGroup
-		  'valuesToChooseFrom.Value("friendliness")=friendlinessLevels
-		  'values.value("smart dude")=True
-		  'values.value("hired on")=New DateTime(2020,3,1)
-		  '
-		  'fieldNameControlTypeMap.value("phone")=cc_Form.controlTypes.PhoneField
-		  'fieldNameControlTypeMap.value("email")=cc_Form.controlTypes.EMailField
-		  ''fieldNameMap.Value("payment_expectedamount")="Erwarteter Zahlungseingang"
-		  ''fieldNameMap.Value("wantstotrainjobinterviewsandsalarynegotiations")="Interview und Gehaltsverh."
-		  ''valuesToChooseFrom.Value("coachingmode")=Array("Präsenz","Blended","Online")
-		  ''
-		  Var SQL As String="Select * from location where id=1"
-		  Var Rs As rowset=SelectSQL(SQL)
-		  values=Rs.toDictionary
+		  values.value("smart dude")=True
+		  values.value("hired on")=New DateTime(2020,3,1)
 		  
-		  Self.cc_dynamic1.init(values,fieldNameMap,fieldNameControlTypeMap,valuesToChooseFrom)
+		  Var controlDescriptors As controlDescriptorSelection=values.toControlDescriptorSelection
+		  
+		  Var curControlDescriptor As controlDescriptor=controlDescriptors.getControlDescriptor("cities")
+		  curControlDescriptor.valuesToChooseFrom=cities
+		  curControlDescriptor.controltype=cc_FormControl.controlTypes.PopupMenu
+		  curControlDescriptor=controlDescriptors.getControlDescriptor("friendliness")
+		  curControlDescriptor.valuesToChooseFrom=friendlinessLevels
+		  curControlDescriptor.controltype=cc_FormControl.controlTypes.RadioButtonGroup
+		  curControlDescriptor=controlDescriptors.getControlDescriptor("notes")
+		  curControlDescriptor.controltype=cc_FormControl.controlTypes.TextArea
+		  curControlDescriptor=controlDescriptors.getControlDescriptor("phone")
+		  curControlDescriptor.controltype=cc_FormControl.controlTypes.PhoneField
+		  curControlDescriptor=controlDescriptors.getControlDescriptor("email")
+		  curControlDescriptor.controltype=cc_FormControl.controlTypes.EMailField
+		  
+		  'Var SQL As String="Select * from someTable where id=1"
+		  'Var Rs As rowset=SelectSQL(SQL)
+		  'values=Rs.toDictionary
+		  
+		  Var controls() As cc_FormControl=ControlDescriptors.createControls
+		  
+		  Self.cc_dynamic1.init(controls)
 		  
 		End Sub
 	#tag EndEvent

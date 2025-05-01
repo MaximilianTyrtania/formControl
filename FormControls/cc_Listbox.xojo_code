@@ -1,9 +1,9 @@
 #tag WebContainerControl
-Begin cc_ControlWithLabel cc_Listbox
+Begin cc_FormControl cc_Listbox
    Compatibility   =   ""
    ControlID       =   ""
    Enabled         =   True
-   Height          =   262
+   Height          =   250
    Indicator       =   0
    LayoutDirection =   0
    LayoutType      =   0
@@ -29,7 +29,7 @@ Begin cc_ControlWithLabel cc_Listbox
       ControlID       =   ""
       Enabled         =   True
       HasHeader       =   False
-      Height          =   262
+      Height          =   250
       HighlightSortedColumn=   True
       Index           =   -2147483648
       Indicator       =   0
@@ -145,14 +145,6 @@ End
 #tag EndWindowCode
 
 #tag ViewBehavior
-	#tag ViewProperty
-		Name="fieldName"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="string"
-		EditorType="MultiLineEditor"
-	#tag EndViewProperty
 	#tag ViewProperty
 		Name="_mPanelIndex"
 		Visible=false
@@ -356,6 +348,14 @@ End
 			"2 - TopToBottom"
 			"3 - BottomToTop"
 		#tag EndEnumValues
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="fieldName"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="string"
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Width"

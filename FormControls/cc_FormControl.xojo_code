@@ -1,5 +1,5 @@
 #tag Class
-Protected Class cc_ControlWithLabel
+Protected Class cc_FormControl
 Inherits webcontainer
 	#tag Method, Flags = &h1
 		Protected Sub Constructor(fieldname as string, label as String, value as Variant)
@@ -112,6 +112,21 @@ Inherits webcontainer
 	#tag Property, Flags = &h0
 		validatorMethod As validate
 	#tag EndProperty
+
+
+	#tag Enum, Name = controlTypes, Type = Integer, Flags = &h0
+		NoControl
+		  TextField
+		  TextArea
+		  CheckBox
+		  PopupMenu
+		  DatePicker
+		  RadioButtonGroup
+		  NumberField
+		  EMailField
+		  PhoneField
+		Listbox
+	#tag EndEnum
 
 
 	#tag ViewBehavior
